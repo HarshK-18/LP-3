@@ -1,0 +1,65 @@
+Certainly! This Solidity smart contract is a basic implementation of a student registration system. Let's go through the code step by step to understand how it works:
+
+### Contract Definition:
+```solidity
+pragma solidity >=0.4.0<=0.9.0;
+
+contract StudentRegister {
+    address public owner;
+    ...
+}
+```
+- The contract is named `StudentRegister` and specifies the version of Solidity it is compatible with (greater than or equal to version 0.4.0 and less than or equal to 0.9.0).
+- `address public owner;` declares a state variable `owner` of type `address` and makes it publicly accessible.
+
+### Constructor:
+```solidity
+constructor() {
+    owner = msg.sender;
+}
+```
+- The constructor is executed once when the contract is deployed. It initializes the `owner` variable with the address of the account that deployed the contract (`msg.sender`).
+
+### Modifier `onlyOwner`:
+```solidity
+modifier onlyOwner {
+    require(msg.sender == owner);
+    _;
+}
+```
+- `onlyOwner` is a custom modifier that restricts access to certain functions. It ensures that only the owner of the contract can execute functions with this modifier.
+
+### Struct `student`:
+```solidity
+struct student {
+    address studentId;
+    string name;
+    string course;
+    uint256 mark1;
+    uint256 mark2;
+    uint256 mark3;
+    uint256 totalMarks;
+    uint256 percentage;
+    bool isExist;
+}
+```
+- The `student` struct defines the structure of a student. It includes the student's Ethereum address (`studentId`), name, course, marks for three subjects (`mark1`, `mark2`, `mark3`), total marks (`totalMarks`), percentage (`percentage`), and a boolean flag `isExist` indicating if the student exists in the system.
+
+### Function `register`:
+```solidity
+function register(address studentId, string memory name, string memory course, uint256 mark1, uint256 mark2, uint256 mark3) public onlyOwner {
+    ...
+}
+```
+- The `register` function allows the owner to register a new student. It takes the student's Ethereum address, name, course, and marks for three subjects as parameters.
+- The function checks if the student already exists in the system. If not, it calculates the total marks and percentage and registers the student by creating a new `student` struct.
+
+### Function `getStudentDetails`:
+```solidity
+function getStudentDetails(address studentId) public view returns (address, string memory, string memory, uint256, uint256) {
+    ...
+}
+```
+- The `getStudentDetails` function allows anyone to view the details of a registered student based on their Ethereum address (`studentId`). It returns the student's Ethereum address, name, course, total marks, and percentage.
+
+In summary, this contract enables the owner to register new students and provides a way to retrieve their details. The `onlyOwner` modifier ensures that only the owner can add new students to the system, and the `getStudentDetails` function allows anyone to view the registered student's information.
