@@ -1,0 +1,221 @@
+Sure, let's go through the code line by line to explain what each part does.
+
+```python
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error, r2_score
+from math import sqrt
+```
+This is the standard import of necessary libraries and packages that are commonly used in data analysis and machine learning tasks.
+
+```python
+df = pd.read_csv('uber.csv')
+df
+```
+This code reads a CSV file named 'uber.csv' into a Pandas DataFrame called `df`.
+
+```python
+df.columns
+```
+This line of code prints the column names of the DataFrame `df`.
+
+```python
+df.drop(['Unnamed: 0','key'],axis =1,inplace = True)
+```
+This line of code drops the 'Unnamed: 0' and 'key' columns from the DataFrame `df`.
+
+```python
+df.info()
+```
+This prints concise summary of the DataFrame `df` which includes column data types and non-null values.
+
+```python
+df.fillna(method='ffill', inplace=True)
+```
+This line fills any missing values (NaNs) in the DataFrame `df` using forward fill method.
+
+```python
+df.isnull().sum()
+```
+This checks and prints the sum of null values for each column in the DataFrame `df`.
+
+```python
+plt.figure(figsize=(8, 6))
+plt.boxplot(df[data_column], vert=True)
+plt.title(f'Box Plot of {data_column}')
+plt.xlabel(data_column)
+plt.show()
+```
+This code generates and displays a box plot for the data in the specified column, `data_column`.
+
+```python
+df[df['fare_amount'].values <= 0]
+```
+This code filters the rows in the DataFrame where the 'fare_amount' is less than or equal to 0.
+
+```python
+df.drop(df[df['fare_amount'].values<=0].index,inplace=True)
+```
+This line drops the rows where the 'fare_amount' is less than or equal to 0 from the DataFrame `df`.
+
+```python
+data_column = 'passenger_count'
+```
+This code assigns the string 'passenger_count' to the variable `data_column`.
+
+```python
+plt.figure(figsize=(8, 6))
+plt.boxplot(df[data_column], vert=True)
+plt.title(f'Box Plot of {data_column}')
+plt.xlabel(data_column)
+plt.show()
+```
+This code generates and displays a box plot for the data in the 'passenger_count' column.
+
+```python
+df[df['passenger_count'] > 6]
+```
+This code filters the rows in the DataFrame where the 'passenger_count' is greater than 6.
+
+```python
+df.drop(df[df['passenger_count'] > 6].index, inplace=True)
+```
+This line drops the rows where the 'passenger_count' is greater than 6 from the DataFrame `df`.
+
+```python
+def filter_latitude(val):
+    if val < -90 or val > 90:
+        return np.nan
+    else:
+        return val
+
+def filter_longitude(val):
+    if val < -180 or val > 180:
+        return np.nan
+    else:
+        return val
+```
+These are two functions that filter latitude and longitude values, setting them to NaN if they are not within the accepted range.
+
+```python
+df['pickup_longitude'] = df['pickup_longitude'].apply(filter_longitude)
+df['pickup_latitude'] = df['pickup_latitude'].apply(filter_latitude)
+df['dropoff_longitude'] = df['dropoff_longitude'].apply(filter_longitude)
+df['dropoff_latitude'] = df['dropoff_latitude'].apply(filter_latitude)
+```
+These lines apply the latitude and longitude filtering functions to the respective columns in the DataFrame `df`.
+
+```python
+df.isnull().sum()
+```
+This checks and prints the sum of null values for each column in the DataFrame `df`.
+
+```python
+df.dropna(inplace=True)
+```
+This drops any rows containing null values from the DataFrame `df`.
+
+```python
+from geopy.distance import great_circle
+```
+This line imports the `great_circle` function from the `geopy.distance` module, which is used to calculate the distance using latitude and longitude.
+
+```python
+df['distance_km'] = df.apply(lambda x: distance_km(x), axis=1)
+```
+This line calculates the distance in kilometers between the pickup and dropoff points using the `great_circle` function and applies it to each row in the DataFrame `df`.
+
+```python
+df.drop(['pickup_longitude', 'pickup_latitude','dropoff_longitude', 'dropoff_latitude'] , inplace=True , axis= 1)
+```
+This line drops the columns related to longitude and latitude from the DataFrame `df`.
+
+```python
+df.describe()
+```
+This generates descriptive statistics that summarize the central tendency, dispersion, and shape of the dataset's distribution.
+
+```python
+df['pickup_datetime'] = pd.to_datetime(df['pickup_datetime'] )
+```
+This line converts the 'pickup_datetime' column to the Pandas datetime format.
+
+```python
+df['day'] = df['pickup_datetime'].dt.day_name()
+df['weekday'] = df['pickup_datetime'].dt.weekday
+df['month'] = df['pickup_datetime'].dt.month_name()
+df['year'] = df['pickup_datetime'].dt.year
+df['hour'] = df['pickup_datetime'].dt.hour
+```
+These lines extract the day name, weekday, month name, year, and hour from the 'pickup_datetime' column and add these as new columns to the DataFrame `df`.
+
+```python
+df.drop('pickup_datetime', axis=1, inplace=True)
+```
+This line drops the 'pickup_datetime' column from the DataFrame `df`.
+
+```python
+df.head()
+```
+This prints the first five rows of the DataFrame `df`.
+
+```python
+label_encoder_day = LabelEncoder()
+label_encoder_month = LabelEncoder()
+```
+These lines create instances of the `LabelEncoder` class to encode categorical variables.
+
+```python
+df['day'] = label_encoder_day.fit_transform(df['day'])
+df['month'] = label_encoder_month.fit_transform(df['month'])
+```
+These lines fit and transform the 'day' and 'month' columns using the `LabelEncoder` instances.
+
+```python
+correlation_matrix = df.corr()
+sns.heatmap(correlation_matrix, annot=False, cmap='coolwarm')
+plt.title('Correlation Heatmap')
+plt.show()
+```
+This code generates a correlation matrix and displays a heatmap using seaborn to visualize the correlation between variables in the DataFrame `df`.
+
+```python
+X = df[['passenger_count', 'distance_km', 'day', 'weekday',
+       'month', 'year', 'hour']]
+y = df['fare_amount']
+```
+These lines define the features (X) and the target variable (y) for the machine learning model.
+
+```python
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+```
+This line splits the dataset into training and testing sets for the machine learning model.
+
+```python
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled =
+
+X_train_scaled = scaler.fit_transform(X_train): This line applies the scaling transformation to the training data X_train. The fit_transform method calculates the mean and standard deviation from the training data and then scales the features. The scaled features are stored in the variable X_train_scaled.
+
+X_test_scaled = scaler.transform(X_test): This line applies the same transformation to the test data X_test. However, instead of recalculating the mean and standard deviation, it uses the values obtained from the training data to scale the test features. The scaled test features are stored in the variable X_test_scaled
+
+"y_pred_lr = lr.predict(X_test_scaled)"
+
+
+This code predicts the target variable values (y_pred_lr) using a machine learning model (lr) trained on scaled test features (X_test_scaled). The predict method takes the scaled test features as input and returns the predicted target variable values based on the trained linear regression model (lr).
+
+"Random forest model
+rf = RandomForestRegressor(n_estimators=100, random_state=42)
+rf.fit(X_train_scaled, y_train)"
+
+
+
+This code snippet creates a Random Forest regression model (rf) with 100 decision trees and a fixed random state of 42 for reproducibility. It then trains the model using the scaled training features (X_train_scaled) and corresponding target values (y_train). The Random Forest algorithm constructs an ensemble of decision trees to make predictions, and in this case, it's being used for regression tasks to predict numerical values. After execution, the rf model is trained and ready to make predictions based on the provided input features.

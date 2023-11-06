@@ -1,0 +1,65 @@
+This code demonstrates gradient descent optimization using the given Python function and plots the optimization process step by step. Here's a detailed explanation of the code:
+
+1. **Imports:**
+   ```python
+   from sympy import Symbol, lambdify
+   import matplotlib.pyplot as plt
+   import numpy as np
+   ```
+   Import necessary libraries: `Symbol` from Sympy for creating a symbolic variable, `lambdify` to convert symbolic expression to a callable function, `matplotlib.pyplot` for plotting, and `numpy` for numerical computations.
+
+2. **Symbol and Function Definition:**
+   ```python
+   x = Symbol('x')
+   function = (x + 5)**2
+   ```
+   Define a symbolic variable `x` and the function to be optimized, in this case, \((x + 5)^2\).
+
+3. **Gradient Descent Function:**
+   ```python
+   def gradient_descent(function, start, learn_rate, n_iter=10000, tolerance=1e-06, step_size=1):
+       # ...
+   ```
+   Define the `gradient_descent` function, which takes the function to be optimized, initial guess (`start`), learning rate (`learn_rate`), maximum number of iterations (`n_iter`), tolerance for convergence (`tolerance`), and step size.
+
+4. **Gradient Calculation and Iterative Optimization:**
+   ```python
+   gradient = lambdify(x, function.diff(x))
+   function = lambdify(x, function)
+   points = [start]
+   iters = 0
+   while step_size > tolerance and iters < n_iter:
+       prev_x = start
+       start = start - learn_rate * gradient(prev_x)
+       step_size = abs(start - prev_x)
+       iters = iters + 1
+       points.append(start)
+   print("The local minimum occurs at", start)
+   ```
+   Inside the `gradient_descent` function, the gradient of the function is calculated using the `lambdify` function. Gradient descent iterations are performed until the step size is smaller than the tolerance or the maximum number of iterations is reached. The optimized points are stored in the `points` list.
+
+5. **Plotting:**
+   ```python
+   x_ = np.linspace(-7, 5, 100)
+   y = function(x_)
+   fig = plt.figure(figsize=(10, 10))
+   ax = fig.add_subplot(1, 1, 1)
+   ax.spines['left'].set_position('center')
+   ax.spines['bottom'].set_position('zero')
+   ax.spines['right'].set_color('none')
+   ax.spines['top'].set_color('none')
+   ax.xaxis.set_ticks_position('bottom')
+   ax.yaxis.set_ticks_position('left')
+   plt.plot(x_, y, 'r')
+   plt.plot(points, function(np.array(points)), '-o')
+   plt.show()
+   ```
+   Generate an array of `x` values for plotting, create a figure and axis, plot the original function in red, and plot the optimization process using blue markers. Finally, display the plot.
+
+6. **Function Call:**
+   ```python
+   gradient_descent(function=function, start=3.0, learn_rate=0.2, n_iter=50)
+   ```
+   Call the `gradient_descent` function with the specified parameters to optimize the given function starting from `x = 3.0`, using a learning rate of `0.2`, and performing a maximum of `50` iterations.
+
+This code visually demonstrates the gradient descent optimization process for the provided function and shows the iterations and convergence to a local minimum.
